@@ -10,7 +10,7 @@
             // Function to update sensor data from the server
             function updateSensorData() {
                 $.ajax({
-                    url: "server_endpoint_to_get_data.php",
+                    url: "webserver.php",
                     type: "GET",
                     dataType: "json",
                     success: function (data) {
