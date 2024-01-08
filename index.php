@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-time Sensor Data</title>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function () {
             // Function to update sensor data from the server
@@ -33,6 +33,7 @@
                         console.log("Error fetching sensor data: " + error);
                         console.log("xhr: ", xhr);
                         console.log("status: ", status);
+                        $("#error").html("Error: " + error);
                     }
                 });
             }
@@ -55,5 +56,6 @@
     <div id="pressure"></div>
     <div id="humidity"></div>
     <div id="gasresistance"></div>
+    <div id="error"></div>
 </body>
 </html>
