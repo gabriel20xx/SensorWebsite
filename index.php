@@ -33,7 +33,7 @@
                         console.log("Error fetching sensor data: " + error);
                         console.log("xhr: ", xhr);
                         console.log("status: ", status);
-                        $("#error").html("Error: " + error);
+                        $("#error").html("Error: " + error + " - " + xhr.status + " - " + xhr.statusText);
                     }
                 });
             }
