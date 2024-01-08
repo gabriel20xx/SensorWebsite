@@ -3,36 +3,62 @@
 $arduinoIP = "192.168.2.250";
 $arduinoEndpoint = "http://$arduinoIP/getSensorData";
 
-// Make a request to the Arduino Uno for sensor data
-$response = @file_get_contents($arduinoEndpoint);
-
-// Check if the request was successful
-if ($response !== false) {
-    // Check if the HTTP status code is available
-    $httpStatus = isset($http_response_header[0]) ? $http_response_header[0] : 'Unknown';
-
-    if (strpos($httpStatus, '200') !== false) {
-        $sensorData = json_decode($response, true);
-
-        if ($sensorData !== null) {
-            $status = $sensorData['status'];
-            $AQI = $sensorData['AQI'];
-            $TVOC = $sensorData['TVOC'];
-            $ECO2 = $sensorData['ECO2'];
-
-            // Do something with the individual sensor values
-            echo "Status: $status<br>";
-            echo "Air Quality Index: $AQI<br>";
-            echo "TVOC Concentration: $TVOC ppb<br>";
-            echo "CO2 Equivalent Concentration: $ECO2 ppm<br>";
-        } else {
-            echo "Error decoding sensor data JSON";
-        }
-    } else {
-        echo "Error fetching sensor data. HTTP Status: $httpStatus";
-    }
-} else {
-    echo "Failed to make the HTTP request to the Arduino";
-}
-
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Your existing head content -->
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to update sensor data
+            function updateSensorData() {
+                $.ajax({
+                    url: "<?php echo $arduinoEndpoint; ?>",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("Success: ", data);
+
+                        // Update the HTML elements with new sensor data
+                        $("#status").html("ENS160Status: " + (data.ENS160Status ? data.ENS160Status : "undefined"));
+                        $("#aqi").html("Air Quality Index: " + (data.AQI ? data.AQI : "undefined"));
+                        $("#tvoc").html("TVOC Concentration: " + (data.TVOC ? data.TVOC + " ppb" : "undefined"));
+                        $("#eco2").html("CO2 Equivalent Concentration: " + (data.ECO2 ? data.ECO2 + " ppm" : "undefined"));
+                        $("#temperature").html("Temperature: " + (data.Temperature ? data.Temperature + " °C" : "undefined"));
+                        $("#pressure").html("Pressure: " + (data.Pressure ? data.Pressure + " ppm" : "undefined"));
+                        $("#humidity").html("Humidity: " + (data.Humidity ? data.Humidity + " %" : "undefined"));
+                        $("#gasresistance").html("Gas Resistance: " + (data.GasResistance ? data.GasResistance + " Ohms" : "undefined"));
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error fetching sensor data: " + error);
+
+                        // Log additional information for debugging
+                        console.log("xhr: ", xhr);
+                        console.log("status: ", status);
+                    }
+                });
+            }
+
+            // Fetch and display sensor data initially
+            updateSensorData();
+
+            // Update sensor data every 1 seconds
+            setInterval(updateSensorData, 1000);
+        });
+    </script>
+</head>
+<body>
+    <h1>Real-time Sensor Data</h1>
+    <div id="status"></div>
+    <div id="aqi"></div>
+    <div id="tvoc"></div>
+    <div id="eco2"></div>
+    <div id="temperature"></div>
+    <div id="pressure"></div>
+    <div id="humidity"></div>
+    <div id="gasresistance"></div>
+</body>
+</html>
