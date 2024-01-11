@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data Display</title>
+</head>
+<body>
+
+<div id="sensorData"></div>
+
+<script>
+// Function to fetch sensor data from the server
+async function fetchSensorData() {
+    try {
+        const response = await fetch('webserver.php', {
+            method: 'POST', // Use POST for sending sensor data
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Display sensor data on the webpage
+            const sensorDataElement = document.getElementById('sensorData');
+            sensorDataElement.innerHTML = `
+                <p>Arduino ID: ${data.data.arduinoID}</p>
+                <p>TVOC: ${data.data.sensor1}</p>
+                <p>ECO2: ${data.data.sensor2}</p>
+            `;
+        } else {
+            console.error('Failed to fetch sensor data:', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching sensor data:', error);
+    }
+}
+
+// Fetch sensor data every 1 second
+setInterval(fetchSensorData, 1000);
+
+</script>
+
+</body>
+</html>
